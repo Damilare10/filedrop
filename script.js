@@ -1,4 +1,4 @@
-const API_BASE = `http://${window.location.hostname}:5000`;
+const API_BASE = '';
 const SERVER_WALLET = "0xaFcaDB5F93B80C32560b395570a65Eb13225aB87"; // Must match backend
 
 // DOM Elements
