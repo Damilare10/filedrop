@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anonymous File Drop</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for premium feel -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">x402 locker</div>
+            <div id="walletStatus" class="wallet-status disconnected">
+                <span class="status-dot"></span>
+                <span class="status-text">Connect Wallet</span>
+            </div>
+        </header>
+
+        <!-- View 1: Upload (Default) -->
+        <div id="uploadView" class="view active">
+            <div class="hero-text">
+                <h1>Sell files anonymously.</h1>
+                <p>Upload a file. Set a price. Get paid in crypto.</p>
+            </div>
+
+            <div class="upload-card">
+                <div id="dropZone" class="drop-zone">
+                    <div class="icon">📁</div>
+                    <p>Drag & Drop your file here</p>
+                    <small>or click to browse</small>
+                    <input type="file" id="fileInput" hidden>
+                </div>
+
+                <div id="filePreview" class="file-preview hidden">
+                    <div class="file-icon">📄</div>
+                    <div class="file-info">
+                        <span id="previewName" class="filename">document.pdf</span>
+                        <span id="previewSize" class="filesize">2.4 MB</span>
+                    </div>
+                    <button id="removeFile" class="icon-btn">✕</button>
+                </div>
+
+                <div class="input-group">
+                    <label>Price (ETH)</label>
+                    <input type="number" id="priceInput" placeholder="0.001" step="0.0001" min="0">
+                </div>
+
+                <button id="generateLinkBtn" class="primary-btn" disabled>Generate Link</button>
+            </div>
+
+            <div id="resultArea" class="result-area hidden">
+                <h3>Your Link is Ready!</h3>
+                <div class="link-box">
+                    <input type="text" id="shareLink" readonly>
+                    <button id="copyLinkBtn">Copy</button>
+                </div>
+                <div id="qrcode" class="qrcode-container"></div>
+            </div>
+        </div>
+
+        <!-- View 2: Download (Active if ?id= is present) -->
+        <div id="downloadView" class="view hidden">
+            <div class="download-card">
+                <div class="lock-icon">🔒</div>
+                <h2>Unlock File</h2>
+                <div class="file-details">
+                    <div class="detail-row">
+                        <span>Filename</span>
+                        <span id="dlFilename" class="mono">...</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Size</span>
+                        <span id="dlSize" class="mono">...</span>
+                        <!-- Note: Size not stored in DB currently, might omit or fetch header -->
+                    </div>
+                </div>
+
+                <div class="price-tag">
+                    <span class="label">Price</span>
+                    <span id="dlPrice" class="amount">... ETH</span>
+                </div>
+
+                <button id="payDownloadBtn" class="primary-btn">
+                    Pay & Download
+                </button>
+                <div id="downloadStatus" class="status-message"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="notification" class="notification">
+        <span class="notification-icon"></span>
+        <span class="notification-text"></span>
+    </div>
+
+    <!-- Overlay Loader -->
+    <div id="loader" class="loader-overlay hidden">
+        <div class="spinner"></div>
+        <div class="loader-text">Processing...</div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
