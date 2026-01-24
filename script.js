@@ -133,7 +133,8 @@ async function uploadFile() {
         }
     } catch (e) {
         toggleLoader(false);
-        showNotification('Network error', 'error');
+        console.error("Upload error:", e);
+        showNotification(e.message || 'Network error', 'error');
     }
 }
 
@@ -141,13 +142,20 @@ function showResult(link) {
     resultArea.classList.remove('hidden');
     shareLinkInput.value = link;
 
-    // Generate QR
-    qrcodeDiv.innerHTML = '';
-    new QRCode(qrcodeDiv, {
-        text: link,
-        width: 128,
-        height: 128
-    });
+    // Generate QR (Safety check)
+    try {
+        if (typeof QRCode !== 'undefined') {
+            qrcodeDiv.innerHTML = '';
+            new QRCode(qrcodeDiv, {
+                text: link,
+                width: 128,
+                height: 128,
+                correctLevel: QRCode.CorrectLevel.L
+            });
+        }
+    } catch (qrErr) {
+        console.warn("QR Generation failed:", qrErr);
+    }
 }
 
 // === Download Logic ===
