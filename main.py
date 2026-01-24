@@ -61,7 +61,8 @@ def init_db():
         conn.commit()
 
 # Initialize DB
-# init_db() # Moved to if __name__ == "__main__": block
+init_db() 
+
 
 def verify_payment(tx_hash: str, payer: str, required_eth: float) -> bool:
     """Verifies a payment on Base Sepolia."""
