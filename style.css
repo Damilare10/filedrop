@@ -306,6 +306,17 @@ input:focus {
     display: flex;
     justify-content: space-between;
     margin-bottom: 8px;
+    overflow: hidden;
+    /* Ensure container truncates */
+}
+
+.detail-row span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 60%;
+    /* Prevent it from taking full width */
+    text-align: right;
 }
 
 .detail-row:last-child {
