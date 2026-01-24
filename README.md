@@ -1,52 +1,39 @@
-# Pay-Per-Pixel Canvas (x402)
+# Anonymous File Drop 📁
 
-A clean, decentralized pixel art canvas running on **Base Sepolia**. Users can drag-and-paint pixels and pay for them in batches using the x402 protocol.
+A decentralized, anonymous file sharing service powered by the **x402 protocol**.
+Upload a file, set a price (or make it free), and get a shareable link.
+Buyers can pay in **ETH (Base Sepolia)** to unlock and download the file instantly.
 
 ## 🚀 Features
 
-*   **Drag & Paint**: Smooth 60fps drawing experience with touch support.
-*   **Batch Payments**: Paint 100 pixels, pay 1 transaction.
-*   **x402 Protocol**: Uses HTTP 402 status codes to trigger crypto payments.
-*   **Wallet Integration**: Auto-detects MetaMask/Coinbase Wallet.
-*   **Instant UX**: Client-side price calculation for instant wallet popups.
-*   **Mobile Ready**: Works on mobile browsers within the local network.
-*   **Tech Stack**: Python (Flask) Backend + Vanilla JS Frontend.
+*   **Anonymous Uploads**: No accounts, no signups. Just drag & drop.
+*   **Crypto Payments**: Built-in x402 payment gateway.
+*   **Pay Walls**: Gate your files behind an ETH price tag.
+*   **Direct Downloads**: Secure file delivery upon payment verification.
+*   **Responsive UI**: Dark mode, mobile-friendly design.
 
-## 🛠️ Setup
+## 🛠️ Stack
 
-1.  **Install Dependencies**:
-    ```bash
-    pip install -r requirements.txt
-    ```
+*   **Backend**: Python (Flask) + Web3.py
+*   **Database**: SQLite (Ephemeral on Render Free Tier)
+*   **Frontend**: Vanilla JS + CSS (Space Grotesk typography)
+*   **Network**: Base Sepolia Testnet
 
-2.  **Configuration**:
-    Create a `.env` file:
-    ```env
-    PAYMENT_WALLET=0xYourWalletAddress
-    BASE_SEPOLIA_RPC=https://...
-    ```
+## 📦 Deployment (Render)
 
-3.  **Start Backend**:
-    ```bash
-    python main.py
-    ```
-    *Runs on http://127.0.0.1:5000*
+This project is configured for deployment on [Render](https://render.com).
 
-4.  **Start Frontend**:
-    ```bash
-    python -m http.server 8000
-    ```
-    *Runs on http://localhost:8000*
+1.  Connect your GitHub repo.
+2.  Set **Build Command**: `pip install -r requirements.txt`
+3.  Set **Start Command**: `gunicorn main:app`
+4.  Add Environment Variables:
+    *   `PAYMENT_WALLET`: Your wallet address.
+    *   `BASE_SEPOLIA_RPC`: Your RPC URL (e.g., Alchemy).
 
-## 📱 Mobile Access
+## 🤖 AI Agent Integration
 
-Find your PC's local IP (e.g., `10.0.0.5`) and visit:
-`http://10.0.0.5:8000`
-
-## 🎨 How to Use
-
-1.  Select a color.
-2.  Drag across the canvas to paint.
-3.  Click **"Pay & Save"**.
-4.  Confirm the transaction in your wallet.
-5.  Wait for the "Success" notification!
+Includes an autonomous **AI Buyer Agent** (`agent_buyer.py`) that can:
+1.  Discover a file link.
+2.  Check the price.
+3.  Execute a blockchain transaction to pay.
+4.  Download and verify the file content.
