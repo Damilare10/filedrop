@@ -324,7 +324,7 @@ async function sendPayment(amountEth) {
         method: 'eth_sendTransaction',
         params: [{
             from: userWallet,
-            to: SERVER_WALLET,
+            to: currentFileInfo.receiver_wallet, // Use dynamic wallet from backend
             value: '0x' + amountWei
         }]
     });
