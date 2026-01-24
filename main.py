@@ -69,10 +69,19 @@ def verify_payment(tx_hash: str, payer: str, required_eth: float) -> bool:
     try:
         print(f"Verifying Tx: {tx_hash} | Payer: {payer} | Required: {required_eth} ETH")
         
-        # 1. Get receipt
-        receipt = web3.eth.get_transaction_receipt(tx_hash)
+        # 1. Get receipt (with retry)
+        receipt = None
+        for i in range(5):
+            try:
+                receipt = web3.eth.get_transaction_receipt(tx_hash)
+                if receipt:
+                    break
+            except Exception:
+                pass
+            time.sleep(1) # Wait 1s between retries
+            
         if not receipt:
-            print("Tx not found or pending.")
+            print("Tx not found or pending after retries.")
             return False
             
         if receipt['status'] != 1:
