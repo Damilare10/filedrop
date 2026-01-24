@@ -149,8 +149,7 @@ function showResult(link) {
             new QRCode(qrcodeDiv, {
                 text: link,
                 width: 128,
-                height: 128,
-                correctLevel: QRCode.CorrectLevel.L
+                height: 128
             });
         }
     } catch (qrErr) {
