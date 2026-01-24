@@ -49,9 +49,15 @@ def init_db():
                 price_eth REAL NOT NULL,
                 storage_key TEXT NOT NULL,
                 mime_type TEXT,
+                size_bytes INTEGER,
                 created_at REAL NOT NULL
             )
         """)
+        # Migration for existing DBs (idempotent)
+        try:
+            conn.execute("ALTER TABLE files ADD COLUMN size_bytes INTEGER")
+        except sqlite3.OperationalError:
+            pass # Column likely exists
         conn.commit()
 
 # Initialize DB
@@ -130,10 +136,12 @@ def upload_file():
     # MIME type detection
     mime_type = mimetypes.guess_type(file.filename)[0] or 'application/octet-stream'
 
+    file_size = os.path.getsize(save_path)
+
     with get_db_connection() as conn:
         conn.execute(
-            "INSERT INTO files (id, filename, price_eth, storage_key, mime_type, created_at) VALUES (?, ?, ?, ?, ?, ?)",
-            (file_id, file.filename, price_eth, storage_key, mime_type, time.time())
+            "INSERT INTO files (id, filename, price_eth, storage_key, mime_type, size_bytes, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (file_id, file.filename, price_eth, storage_key, mime_type, file_size, time.time())
         )
         conn.commit()
         
@@ -156,6 +164,7 @@ def get_file_info(file_id):
         "filename": file_row["filename"],
         "price_eth": file_row["price_eth"],
         "mime_type": file_row["mime_type"],
+        "size_bytes": file_row["size_bytes"],
         "created_at": file_row["created_at"],
         "receiver_wallet": RECEIVER_WALLET
     })

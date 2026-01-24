@@ -181,7 +181,7 @@ async function loadFileInfo(fileId) {
             currentFileInfo = { ...data, id: fileId };
             document.getElementById('dlFilename').textContent = data.filename;
             document.getElementById('dlPrice').textContent = `${data.price_eth} ETH`;
-            document.getElementById('dlSize').textContent = "Unknown"; // Backend doesn't send size yet
+            document.getElementById('dlSize').textContent = data.size_bytes ? formatBytes(data.size_bytes) : "Unknown";
 
             // If free, change button text
             if (data.price_eth === 0) {
