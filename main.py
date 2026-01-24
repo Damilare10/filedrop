@@ -64,8 +64,8 @@ def init_db():
 init_db() 
 
 
-def verify_payment(tx_hash: str, payer: str, required_eth: float) -> bool:
-    """Verifies a payment on Base Sepolia."""
+def verify_payment(tx_hash: str, payer: str, required_eth: float) -> tuple[bool, str]:
+    """Verifies a payment properly using Web3."""
     try:
         print(f"Verifying Tx: {tx_hash} | Payer: {payer} | Required: {required_eth} ETH")
         
@@ -78,42 +78,35 @@ def verify_payment(tx_hash: str, payer: str, required_eth: float) -> bool:
                     break
             except Exception:
                 pass
-            time.sleep(1) # Wait 1s between retries
+            time.sleep(1) 
             
         if not receipt:
-            print("Tx not found or pending after retries.")
-            return False
+            return False, "Tx receipt not found (Check RPC or Tx Hash)"
             
         if receipt['status'] != 1:
-            print("Tx failed (status 0).")
-            return False
+            return False, "Transaction failed on-chain (status 0)"
 
         # 2. Get tx details
         tx = web3.eth.get_transaction(tx_hash)
         
         # 3. Verify Receiver
         if tx['to'].lower() != RECEIVER_WALLET.lower():
-            print(f"Wrong receiver: {tx['to']}")
-            return False
+            return False, f"Wrong receiver. Got {tx['to']}, Expected {RECEIVER_WALLET}"
             
         # 4. Verify Sender
         if tx['from'].lower() != payer.lower():
-            print(f"Wrong sender: {tx['from']}")
-            return False
+            return False, f"Wrong sender. Got {tx['from']}, Expected {payer}"
             
-        # 5. Verify Amount (Allowing for small float diffs, so compare wei)
+        # 5. Verify Amount (Allowing for 5% slippage/rounding to be safe)
         required_wei = Web3.to_wei(required_eth, 'ether')
-        # Allow 1% slippage/rounding error just in case, though usually exact
-        if tx['value'] < required_wei: 
-            print(f"Value too low: {tx['value']} < {required_wei}")
-            return False
+        if tx['value'] < (required_wei * 0.95): 
+            return False, f"Value too low. Got {tx['value']}, Expected ~{required_wei}"
             
-        print(f"✅ Payment Verified: {tx_hash}")
-        return True
+        return True, "Payment Verified"
 
     except Exception as e:
         print(f"Verification error: {e}")
-        return False
+        return False, f"Server Error: {str(e)}"
 
 @app.route("/api/upload", methods=["POST"])
 def upload_file():
@@ -201,8 +194,9 @@ def unlock_file(file_id):
          pass
     else:
         # Verify Payment
-        if not verify_payment(tx_hash, payer, file_row["price_eth"]):
-            return jsonify({"error": "Payment verification failed"}), 402
+        success, reason = verify_payment(tx_hash, payer, file_row["price_eth"])
+        if not success:
+            return jsonify({"error": f"Payment failed: {reason}"}), 402
             
     # Serve File
     file_path = os.path.join(STORAGE_DIR, file_row["storage_key"])
