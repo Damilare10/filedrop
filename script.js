@@ -37,10 +37,19 @@ async function init() {
     if (fileId) {
         // Download Mode
         viewUpload.classList.remove('active');
+        viewUpload.classList.add('hidden');
+
         viewDownload.classList.add('active');
+        viewDownload.classList.remove('hidden');
+
         await loadFileInfo(fileId);
     } else {
         // Upload Mode (Default)
+        viewUpload.classList.remove('hidden');
+        viewUpload.classList.add('active');
+
+        viewDownload.classList.remove('active');
+        viewDownload.classList.add('hidden');
     }
 
     // Auto-connect wallet if previously connected
